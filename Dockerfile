@@ -15,6 +15,20 @@ RUN chmod a+x /docker-buildx
 ARG NODE_VERSION
 FROM node:${NODE_VERSION}
 
+RUN apk add --no-cache \
+    bash \
+    bzip2 \
+    curl \
+    git \
+    gnupg \
+    gzip \
+    make \
+    net-tools \
+    parallel \
+    tar \
+    unzip \
+    zip
+
 #######################
 ## INSTALLING DOCKER ##
 #######################
@@ -82,6 +96,8 @@ RUN mkdir /certs /certs/client && chmod 1777 /certs /certs/client
 ## INSTALLING BUILDX ##
 #######################
 COPY --from=fetcher /docker-buildx /usr/lib/docker/cli-plugins/docker-buildx
+
+WORKDIR /code
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["sh"]
