@@ -47,6 +47,8 @@ jobs:
           - 15.8-alpine
           - 15.9-alpine
           - 15.10-alpine
+          - 15.11-alpine
+          - 15.12-alpine
     steps:
       - name: Checkout
         uses: actions/checkout@v2
