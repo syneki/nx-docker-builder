@@ -21,6 +21,7 @@ jobs:
           - 12.19-alpine
           - 12.20-alpine
           - 12.21-alpine
+          - 12.22-alpine
           # 13
           - 13-alpine
           - 13.10-alpine
@@ -49,6 +50,7 @@ jobs:
           - 15.10-alpine
           - 15.11-alpine
           - 15.12-alpine
+          - 15.13-alpine
     steps:
       - name: Checkout
         uses: actions/checkout@v2
