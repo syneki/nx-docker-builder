@@ -1,5 +1,11 @@
 include:
   - template: "Workflows/MergeRequest-Pipelines.gitlab-ci.yml"
+  - .gitlab/node-12.yml
+  - .gitlab/node-14.yml
+  - .gitlab/node-15.yml
+
+stages:
+  - build
 
 .docker-build:
   # Use the official docker image.
@@ -12,11 +18,15 @@ include:
     GH_IMAGE: ghcr.io/gperdomor/nx-docker
     DH_IMAGE: gperdomor/nx-docker
   before_script:
+    - echo "Node --> $NODE_VERSION"
+    - echo "Alpine --> $ALPINE_VERSION"
     - echo $GH_PAT | docker login ghcr.io --username $GH_OWNER --password-stdin
     - echo $DH_PAT | docker login --username $DH_OWNER --password-stdin
   script:
     - eval "$(./tools/scripts/semver-parser.sh $NODE_VERSION)"
-    - docker build --pull -f node/${MAYOR}/Dockerfile
+    - docker build --pull -f Dockerfile
+      --build-arg NODE_VERSION=${NODE_VERSION}
+      --build-arg ALPINE_VERSION=${ALPINE_VERSION}
       --label org.opencontainers.image.title=nx-docker
       --label org.opencontainers.image.description="Builder companion for @nx-tools/nx-docker npm package"
       --label org.opencontainers.image.url=https://github.com/gperdomor/nx-docker-builder
@@ -25,41 +35,19 @@ include:
       --label org.opencontainers.image.created=$(date +'%Y-%m-%dT%T')
       --label org.opencontainers.image.revision=${CI_COMMIT_SHA}
       --label org.opencontainers.image.licenses=MIT
-      -t ${GH_IMAGE}:${MAYOR}.${MINOR}.${PATCH}
-      -t ${GH_IMAGE}:${MAYOR}.${MINOR}
-      -t ${GH_IMAGE}:${MAYOR}
-      -t ${DH_IMAGE}:${MAYOR}.${MINOR}.${PATCH}
-      -t ${DH_IMAGE}:${MAYOR}.${MINOR}
-      -t ${DH_IMAGE}:${MAYOR}
+      -t ${GH_IMAGE}:${MAYOR}.${MINOR}.${PATCH}-alpine
+      -t ${GH_IMAGE}:${MAYOR}.${MINOR}-alpine
+      -t ${GH_IMAGE}:${MAYOR}-alpine
+      -t ${DH_IMAGE}:${MAYOR}.${MINOR}.${PATCH}-alpine
+      -t ${DH_IMAGE}:${MAYOR}.${MINOR}-alpine
+      -t ${DH_IMAGE}:${MAYOR}-alpine
       .
     - |
-      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" || "$CI_COMMIT_BRANCH" == "feature/rebuild" ]]; then
         docker image push --all-tags ${GH_IMAGE}
         docker image push --all-tags ${DH_IMAGE}
       else
+        docker image push --all-tags ${GH_IMAGE}
+        docker image push --all-tags ${DH_IMAGE}
         echo "Done"
       fi
-
-build-12:
-  extends: [.docker-build]
-  variables:
-    NODE_VERSION: 12.22.1
-  rules:
-    - changes:
-        - node/12/Dockerfile
-
-build-14:
-  extends: [.docker-build]
-  variables:
-    NODE_VERSION: 14.16.1
-  rules:
-    - changes:
-        - node/14/Dockerfile
-
-build-15:
-  extends: [.docker-build]
-  variables:
-    NODE_VERSION: 15.14.0
-  rules:
-    - changes:
-        - node/15/Dockerfile
