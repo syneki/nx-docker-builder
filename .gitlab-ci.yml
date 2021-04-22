@@ -1,0 +1,4 @@
+hello:
+  image: alpine:3.13
+  script:
+    - echo "Hello CI"
