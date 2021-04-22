@@ -15,7 +15,6 @@ include:
     - echo $GH_PAT | docker login ghcr.io --username $GH_OWNER --password-stdin
     - echo $DH_PAT | docker login --username $DH_OWNER --password-stdin
   script:
-    - docker info
     - eval "$(./tools/scripts/semver-parser.sh $NODE_VERSION)"
     - docker build --pull -f node/${MAYOR}/Dockerfile
       --label org.opencontainers.image.title=nx-docker
@@ -26,7 +25,7 @@ include:
       --label org.opencontainers.image.created=$(date +'%Y-%m-%dT%T')
       --label org.opencontainers.image.revision=${CI_COMMIT_SHA}
       --label org.opencontainers.image.licenses=MIT
-      -tag ${GH_IMAGE}:${MAYOR}.${MINOR}.${PATCH}
+      -t ${GH_IMAGE}:${MAYOR}.${MINOR}.${PATCH}
       -t ${GH_IMAGE}:${MAYOR}.${MINOR}
       -t ${GH_IMAGE}:${MAYOR}
       -t ${DH_IMAGE}:${MAYOR}.${MINOR}.${PATCH}
@@ -54,7 +53,7 @@ build-14:
   variables:
     NODE_VERSION: 14.16.1
   rules:
-    - changes:
+    - exists:
         - node/14/Dockerfile
 
 build-15:
@@ -62,5 +61,5 @@ build-15:
   variables:
     NODE_VERSION: 15.14.0
   rules:
-    - changes:
+    - exists:
         - node/15/Dockerfile
