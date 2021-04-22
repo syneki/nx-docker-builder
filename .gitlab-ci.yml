@@ -1,4 +1,57 @@
-hello:
-  image: alpine:3.13
+include:
+  - template: "Workflows/MergeRequest-Pipelines.gitlab-ci.yml"
+
+.docker-build:
+  # Use the official docker image.
+  image: docker:20.10.6
+  stage: build
+  services:
+    - docker:20.10.6-dind
+  variables:
+    DOCKER_BUILDKIT: 1
+    GH_IMAGE: ghcr.io/gperdomor/nx-docker
+    DH_IMAGE: gperdomor/nx-docker
+  before_script:
+    - echo $GH_PAT | docker login ghcr.io --username $GH_OWNER --password-stdin
+    - echo $DH_PAT | docker login --username $DH_OWNER --password-stdin
   script:
-    - echo "Hello CI"
+    - eval "$(./tools/scripts/semver-parser.sh $NODE_VERSION)"
+    - docker build --pull -f node/${MAYOR}/Dockerfile
+      -t ${GH_IMAGE}:${MAYOR}.${MINOR}.${PATCH}
+      -t ${GH_IMAGE}:${MAYOR}.${MINOR}
+      -t ${GH_IMAGE}:${MAYOR}
+      -t ${DH_IMAGE}:${MAYOR}.${MINOR}.${PATCH}
+      -t ${DH_IMAGE}:${MAYOR}.${MINOR}
+      -t ${DH_IMAGE}:${MAYOR}
+      .
+    - |
+      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+        docker image push --all-tags ${GH_IMAGE}
+        docker image push --all-tags ${DH_IMAGE}
+      else
+        echo "Done"
+      fi
+
+build-12:
+  extends: [.docker-build]
+  variables:
+    NODE_VERSION: 12.22.1
+  rules:
+    - exists:
+        - node/12/Dockerfile
+
+build-14:
+  extends: [.docker-build]
+  variables:
+    NODE_VERSION: 14.16.1
+  rules:
+    - exists:
+        - node/14/Dockerfile
+
+build-15:
+  extends: [.docker-build]
+  variables:
+    NODE_VERSION: 15.14.0
+  rules:
+    - exists:
+        - node/15/Dockerfile
