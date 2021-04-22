@@ -17,6 +17,14 @@ include:
   script:
     - eval "$(./tools/scripts/semver-parser.sh $NODE_VERSION)"
     - docker build --pull -f node/${MAYOR}/Dockerfile
+      --label org.opencontainers.image.title=nx-docker
+      --label org.opencontainers.image.description="Builder companion for @nx-tools/nx-docker npm package"
+      --label org.opencontainers.image.url=https://github.com/gperdomor/nx-docker-builder
+      --label org.opencontainers.image.source=https://github.com/gperdomor/nx-docker-builder
+      --label org.opencontainers.image.version=main
+      --label org.opencontainers.image.created=$(date +'%Y-%m-%dT%T')
+      --label org.opencontainers.image.revision=${CI_COMMIT_SHA}
+      --label org.opencontainers.image.licenses=MIT
       -t ${GH_IMAGE}:${MAYOR}.${MINOR}.${PATCH}
       -t ${GH_IMAGE}:${MAYOR}.${MINOR}
       -t ${GH_IMAGE}:${MAYOR}
@@ -37,7 +45,7 @@ build-12:
   variables:
     NODE_VERSION: 12.22.1
   rules:
-    - changes:
+    - exists:
         - node/12/Dockerfile
 
 build-14:
@@ -45,7 +53,7 @@ build-14:
   variables:
     NODE_VERSION: 14.16.1
   rules:
-    - changes:
+    - exists:
         - node/14/Dockerfile
 
 build-15:
@@ -53,5 +61,5 @@ build-15:
   variables:
     NODE_VERSION: 15.14.0
   rules:
-    - changes:
+    - exists:
         - node/15/Dockerfile
