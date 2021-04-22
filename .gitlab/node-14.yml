@@ -1,0 +1,7 @@
+build-14:
+  extends: [.docker-build]
+  variables:
+    NODE_VERSION: 14.16.1
+  rules:
+    - changes:
+        - .gitlab/node-14.yml

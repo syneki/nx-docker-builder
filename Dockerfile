@@ -1,3 +1,6 @@
+ARG ALPINE_VERSION
+ARG NODE_VERSION
+
 ## STAGE 1 ##
 #############
 
@@ -13,7 +16,7 @@ RUN chmod a+x /docker-buildx
 ## STAGE 2 ##
 #############
 
-FROM node:12.22.1-alpine3.12
+FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION:-3.13}
 
 # --> add essential deps
 
