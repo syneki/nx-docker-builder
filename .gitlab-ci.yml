@@ -37,7 +37,7 @@ build-12:
   variables:
     NODE_VERSION: 12.22.1
   rules:
-    - exists:
+    - changes:
         - node/12/Dockerfile
 
 build-14:
@@ -45,7 +45,7 @@ build-14:
   variables:
     NODE_VERSION: 14.16.1
   rules:
-    - exists:
+    - changes:
         - node/14/Dockerfile
 
 build-15:
@@ -53,5 +53,5 @@ build-15:
   variables:
     NODE_VERSION: 15.14.0
   rules:
-    - exists:
+    - changes:
         - node/15/Dockerfile
