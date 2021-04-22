@@ -18,8 +18,6 @@ stages:
     GH_IMAGE: ghcr.io/gperdomor/nx-docker
     DH_IMAGE: gperdomor/nx-docker
   before_script:
-    - echo "Node --> $NODE_VERSION"
-    - echo "Alpine --> $ALPINE_VERSION"
     - echo $GH_PAT | docker login ghcr.io --username $GH_OWNER --password-stdin
     - echo $DH_PAT | docker login --username $DH_OWNER --password-stdin
   script:
@@ -43,11 +41,9 @@ stages:
       -t ${DH_IMAGE}:${MAYOR}-alpine
       .
     - |
-      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" || "$CI_COMMIT_BRANCH" == "feature/rebuild" ]]; then
+      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
         docker image push --all-tags ${GH_IMAGE}
         docker image push --all-tags ${DH_IMAGE}
       else
-        docker image push --all-tags ${GH_IMAGE}
-        docker image push --all-tags ${DH_IMAGE}
-        echo "Done"
+        echo "Done without upload images to registries"
       fi

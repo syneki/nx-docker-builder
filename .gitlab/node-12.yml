@@ -1,9 +1,8 @@
 build-12:
   extends: [.docker-build]
-  parallel:
-    matrix:
-      - ALPINE_VERSION: "3.12"
-        NODE_VERSION: ["12.21.0", "12.22.0", "12.22.1"]
+  variables:
+    NODE_VERSION: "12.22.1"
+    ALPINE_VERSION: "3.12"
   rules:
-    - exists:
+    - changes:
         - .gitlab/node-12.yml

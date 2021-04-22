@@ -1,8 +1,0 @@
-build-15:
-  extends: [.docker-build]
-  parallel:
-    matrix:
-      - NODE_VERSION: [16.0.0]
-  rules:
-    - changes:
-        - .gitlab/node-15.yml
