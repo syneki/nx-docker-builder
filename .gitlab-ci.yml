@@ -3,6 +3,7 @@ include:
   - .gitlab/node-12.yml
   - .gitlab/node-14.yml
   - .gitlab/node-15.yml
+  - .gitlab/node-16.yml
 
 stages:
   - build
