@@ -1,15 +1,15 @@
-build-15:
+build-16:
   extends: [.docker-build]
   variables:
-    NODE_VERSION: 15.14.0
+    NODE_VERSION: 16.0.0
   rules:
     - changes:
-        - .gitlab/node-15.yml
+        - .gitlab/node-16.yml
 
-build-15-helm:
-  extends: [build-15]
+build-16-helm:
+  extends: [build-16]
   stage: helm
-  needs: [build-15]
+  needs: [build-16]
   variables:
     DOCKERFILE: Dockerfile.helm
     TAG_SUFFIX: "-helm"
