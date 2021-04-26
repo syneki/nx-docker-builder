@@ -6,6 +6,7 @@ include:
 
 stages:
   - build
+  - helm
 
 .docker-build:
   # Use the official docker image.
@@ -17,14 +18,17 @@ stages:
     DOCKER_BUILDKIT: 1
     GH_IMAGE: ghcr.io/gperdomor/nx-docker
     DH_IMAGE: gperdomor/nx-docker
+    DOCKERFILE: Dockerfile
+    TAG_SUFFIX: ""
   before_script:
     - echo $GH_PAT | docker login ghcr.io --username $GH_OWNER --password-stdin
     - echo $DH_PAT | docker login --username $DH_OWNER --password-stdin
   script:
     - eval "$(./tools/scripts/semver-parser.sh $NODE_VERSION)"
-    - docker build --pull -f Dockerfile
+    - docker build --pull -f ${DOCKERFILE}
       --build-arg NODE_VERSION=${NODE_VERSION}
       --build-arg ALPINE_VERSION=${ALPINE_VERSION}
+      --build-arg HELM_VERSION=${HELM_VERSION}
       --label org.opencontainers.image.title=nx-docker
       --label org.opencontainers.image.description="Builder companion for @nx-tools/nx-docker npm package"
       --label org.opencontainers.image.url=https://github.com/gperdomor/nx-docker-builder
@@ -33,12 +37,12 @@ stages:
       --label org.opencontainers.image.created=$(date +'%Y-%m-%dT%T')
       --label org.opencontainers.image.revision=${CI_COMMIT_SHA}
       --label org.opencontainers.image.licenses=MIT
-      -t ${GH_IMAGE}:${MAYOR}.${MINOR}.${PATCH}-alpine
-      -t ${GH_IMAGE}:${MAYOR}.${MINOR}-alpine
-      -t ${GH_IMAGE}:${MAYOR}-alpine
-      -t ${DH_IMAGE}:${MAYOR}.${MINOR}.${PATCH}-alpine
-      -t ${DH_IMAGE}:${MAYOR}.${MINOR}-alpine
-      -t ${DH_IMAGE}:${MAYOR}-alpine
+      -t ${GH_IMAGE}:${MAYOR}.${MINOR}.${PATCH}-alpine${TAG_SUFFIX}
+      -t ${GH_IMAGE}:${MAYOR}.${MINOR}-alpine${TAG_SUFFIX}
+      -t ${GH_IMAGE}:${MAYOR}-alpine${TAG_SUFFIX}
+      -t ${DH_IMAGE}:${MAYOR}.${MINOR}.${PATCH}-alpine${TAG_SUFFIX}
+      -t ${DH_IMAGE}:${MAYOR}.${MINOR}-alpine${TAG_SUFFIX}
+      -t ${DH_IMAGE}:${MAYOR}-alpine${TAG_SUFFIX}
       .
     - |
       if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then

@@ -5,3 +5,11 @@ build-15:
   rules:
     - changes:
         - .gitlab/node-15.yml
+
+build-15-helm:
+  extends: [build-15]
+  stage: helm
+  needs: [build-15]
+  variables:
+    DOCKERFILE: Dockerfile.helm
+    TAG_SUFFIX: "-helm"

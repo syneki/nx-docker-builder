@@ -6,3 +6,11 @@ build-12:
   rules:
     - changes:
         - .gitlab/node-12.yml
+
+build-12-helm:
+  extends: [build-12]
+  stage: helm
+  needs: [build-12]
+  variables:
+    DOCKERFILE: Dockerfile.helm
+    TAG_SUFFIX: "-helm"

@@ -20,10 +20,11 @@ FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION:-3.13}
 
 # --> add essential deps
 
-RUN apk add --no-cache \
+RUN apk add --update --no-cache \
     bash \
     bzip2 \
     curl \
+	ca-certificates \
     git \
     gnupg \
     gzip \
