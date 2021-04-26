@@ -13,3 +13,5 @@ build-14-helm:
   variables:
     DOCKERFILE: Dockerfile.helm
     TAG_SUFFIX: "-helm"
+  rules:
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
