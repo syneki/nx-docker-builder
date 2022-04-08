@@ -1,0 +1,13 @@
+name: 'Find missing tags'
+description: 'Fetch missing tags for nx-builder images'
+inputs:
+  ignored-tags: # id of input
+    description: 'Ignored tags'
+    required: false
+    default: ''
+outputs:
+  missing-tags:
+    description: 'Missing tags to build'
+runs:
+  using: 'node16'
+  main: 'main.js'
