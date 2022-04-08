@@ -26,7 +26,7 @@ jobs:
         id: fetch-tags
         uses: ./.github/actions/fetch-tags
         with:
-          ignored-tags: '16.14.1'
+          ignored-tags: '16.14.1-alpine'
     outputs:
       tags: '${{ steps.fetch-tags.outputs.missing-tags }}'
       latest: '${{ steps.fetch-tags.outputs.latest }}'
@@ -79,8 +79,8 @@ jobs:
         with:
           context: ./docker
           push: ${{ github.ref == 'refs/heads/main' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
           build-args: |
             NODE_VERSION=${{ matrix.NODE_VERSION }}
       - name: Image ditagsgest
