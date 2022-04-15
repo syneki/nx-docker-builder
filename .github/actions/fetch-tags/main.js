@@ -50,9 +50,15 @@ const main = async () => {
     const sortedTags = semver.sort([...toBuild]);
     const latest = sortedTags?.slice(-1)?.[0] || '';
 
-    info(`Calculated tags to build:\n${sortedTags.join('\n')}`);
+    if (sortedTags.length > 0) {
+      info(`Calculated tags to build:\n${sortedTags.join('\n')}`);
+      setOutput('empty_matrix', false);
+    } else {
+      info(`No new tags to be build`);
+      setOutput('empty_matrix', true);
+    }
 
-    setOutput('missing-tags', sortedTags);
+    setOutput('matrix', sortedTags);
     setOutput('latest', latest.startsWith('16') ? latest : '');
   } catch (error) {
     setFailed(error.message);

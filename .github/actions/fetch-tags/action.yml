@@ -6,8 +6,12 @@ inputs:
     required: false
     default: ''
 outputs:
-  missing-tags:
+  matrix:
     description: 'Missing tags to build'
+  empty_matrix:
+    description: 'The matrix is empty?'
+  latest:
+    description: 'Node version for latest tag'
 runs:
   using: 'node16'
   main: 'main.js'

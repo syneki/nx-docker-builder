@@ -28,16 +28,18 @@ jobs:
         with:
           ignored-tags: '16.14.1-alpine'
     outputs:
-      tags: '${{ steps.fetch-tags.outputs.missing-tags }}'
+      matrix: '${{ steps.fetch-tags.outputs.matrix }}'
+      empty_matrix: '${{ steps.fetch-tags.outputs.empty_matrix }}'
       latest: '${{ steps.fetch-tags.outputs.latest }}'
 
   build:
+    if: ${{ needs.calculate-tags.outputs.empty_matrix == 'false' }}
     runs-on: ubuntu-latest
     needs: calculate-tags
     strategy:
       fail-fast: false
       matrix:
-        NODE_VERSION: '${{ fromJson(needs.calculate-tags.outputs.tags) }}'
+        NODE_VERSION: '${{ fromJson(needs.calculate-tags.outputs.matrix) }}'
     steps:
       - name: Checkout
         uses: actions/checkout@v3
